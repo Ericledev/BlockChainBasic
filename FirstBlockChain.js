@@ -9,10 +9,11 @@ class Block {
         this.nonce = 0
     }
     caculateHash() {
-        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data)).toString()
+        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString()
     }
     mineBlock(difficulty) {
-        while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+        while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("a")) {
+            console.log("Ericle check this.hash.substring - Array.join: ", Array(difficulty + 1).join("a"))
             this.nonce++
             this.hash = this.caculateHash()
         }
@@ -24,6 +25,7 @@ class Block {
 class BlockChain {
     constructor() {
         this.chain = [this.createGenesisBlock()]
+        this.difficulty = 2
     }
     createGenesisBlock() {
         return new Block(0, '19/5/2022', `Uncle Ho's birthday`, '0')
@@ -33,7 +35,8 @@ class BlockChain {
     }
     addBlock(newBlock) {
         newBlock.previousHash = this.getLatestBlock().hash
-        newBlock.hash = newBlock.caculateHash()
+        newBlock.mineBlock(this.difficulty)
+        //newBlock.hash = newBlock.caculateHash()
         this.chain.push(newBlock)
     }
     isChainValid() {
@@ -51,14 +54,13 @@ class BlockChain {
     }
 }
 let savjeeCoin = new BlockChain()
+
+console.log('Mining block 1......')
 savjeeCoin.addBlock(new Block(1, '20/5/2022', { amount: 5 }))
-savjeeCoin.addBlock(new Block(2, '21/5/2022', { amount: 10 }))
 
-console.log(JSON.stringify(savjeeCoin, null, 3))
-console.log("Ericle check BlockChain is valid?: ", savjeeCoin.isChainValid())
+console.log('Mining block 2......')
+savjeeCoin.addBlock(new Block(1, '20/5/2022', { amount: 5 }))
 
-savjeeCoin.chain[1].data = { amount: 4 }
-savjeeCoin.chain[1].hash = savjeeCoin.chain[1].caculateHash()
+//5console.log(JSON.stringify(savjeeCoin, null, 3))
 
-console.log("Ericle check BlockChain is valid?: ", savjeeCoin.isChainValid())
-console.log(JSON.stringify(savjeeCoin, null, 3))
+
